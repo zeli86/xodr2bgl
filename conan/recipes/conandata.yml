@@ -1,0 +1,26 @@
+sources:
+  "cmake":
+    "3.28.1": 
+      url: "https://github.com/Kitware/CMake/releases/download/v3.28.1/cmake-3.28.1.tar.gz"
+      sha256: "15e94f83e647f7d620a140a7a5da76349fc47a1bfed66d0f5cdee8e7344079ad"
+      strip_root: true
+  "catch2":
+    "3.5.2":
+      url: "https://github.com/catchorg/Catch2/archive/refs/tags/v3.5.2.tar.gz"
+      sha256: "269543a49eb76f40b3f93ff231d4c24c27a7e16c90e47d2e45bcc564de470c6e"
+      strip_root: true
+  "boost":
+    "1.84.0": 
+      url: "https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.bz2"
+      sha256: "cc4b893acf645c9d4b698e9a0f08ca8846aa5d6c68275c14c3e7949c24109454"
+      strip_root: true
+  "pugixml":
+    "1.14.0": 
+      url: "https://github.com/zeux/pugixml/archive/refs/tags/v1.14.tar.gz"
+      sha256: "610f98375424b5614754a6f34a491adbddaaec074e9044577d965160ec103d2e"
+      strip_root: true
+
+tool_requires:
+    - "cmake/3.28.1@atus/stable"
+
+

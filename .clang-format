@@ -1,0 +1,10 @@
+---
+BreakBeforeBraces: Allman
+ColumnLimit: 0
+IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+PointerAlignment: Left
+SpacesBeforeTrailingComments: 1
+UseTab: Never

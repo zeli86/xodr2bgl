@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Ignore build
+build/
+Build/
+.vscode
+
+# Misc
+*.ods
+trash/

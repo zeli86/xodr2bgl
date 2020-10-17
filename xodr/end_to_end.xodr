@@ -1,0 +1,88 @@
+<?xml version="1.0" standalone="yes"?>
+<OpenDRIVE>
+    <header revMajor="1" revMinor="6" name="" version="1.00" date="Wed Aug 14 19:23:52 2019" north="0" south="0" east="0" west="0" />
+    <road rule="One" name="" length="10" id="1" junction="-1">
+        <link>
+            <successor elementType="road" elementId="2" contactPoint="end" />
+        </link>
+        <type s="0" type="town" country="DE"/>
+        <planView>
+            <geometry s="0" x="10" y="0" hdg="3.14159265359" length="10">
+                <line/>
+            </geometry>
+        </planView>
+        <elevationProfile />
+        <lateralProfile />
+        <lanes>
+            <laneSection s="0">
+                <left>
+                    <lane id="1" type="driving" level="false">
+                        <link>
+                            <successor id="-1"/>
+                        </link>
+                        <width sOffset="0" a="3" b="0" c="0" d="0"/>
+                    </lane>
+                </left>
+                <center>
+                    <lane id="0" type="none" level="false">
+                        <link>
+                        </link>
+                    </lane>
+                </center>
+                <right>
+                    <lane id="-1" type="driving" level="false">
+                        <link>
+                            <successor id="1"/>
+                        </link>
+                        <width sOffset="0" a="3" b="0" c="0" d="0"/>
+                    </lane>
+                </right>
+            </laneSection>
+        </lanes>
+        <objects />
+        <signals />
+        <surface />
+    </road>
+    <road rule="Two" name="" length="10" id="2" junction="-1">
+        <link>
+            <successor elementType="road" elementId="1" contactPoint="end" />
+        </link>
+        <type s="0" type="town" country="DE"/>
+        <planView>
+            <geometry s="0" x="10" y="0" hdg="0" length="10">
+                <line/>
+            </geometry>
+        </planView>
+        <elevationProfile />
+        <lateralProfile />
+        <lanes>
+            <laneSection s="0">
+                <left>
+                    <lane id="1" type="driving" level="false">
+                        <link>
+                            <successor id="-1"/>
+                        </link>
+                        <width sOffset="0" a="3" b="0" c="0" d="0"/>
+                    </lane>
+                </left>
+                <center>
+                    <lane id="0" type="none" level="false">
+                        <link>
+                        </link>
+                    </lane>
+                </center>
+                <right>
+                    <lane id="-1" type="driving" level="false">
+                        <link>
+                            <successor id="1"/>
+                        </link>
+                        <width sOffset="0" a="3" b="0" c="0" d="0"/>
+                    </lane>
+                </right>
+            </laneSection>
+        </lanes>
+        <objects />
+        <signals />
+        <surface />
+    </road>
+</OpenDRIVE>

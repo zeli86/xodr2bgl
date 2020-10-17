@@ -1,0 +1,8 @@
+[requires]
+pugixml/1.14.0@atus/stable
+boost/1.84.0@atus/stable
+catch2/3.5.2@atus/stable
+#fakeit/2.4.0@atus/stable
+
+[generators]
+CMakeToolchain

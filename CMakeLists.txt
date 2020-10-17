@@ -1,0 +1,35 @@
+# Copyright 2024 Želimir Marojević
+#
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt
+# or copy at http://www.boost.org/LICENSE_1_0.txt)
+#
+# For more information, see http://www.boost.org
+
+cmake_minimum_required(VERSION 3.24)
+
+project (xodr2bgl)
+
+option(ENABLE_TESTS ON)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_VERBOSE_MAKEFILE OFF)
+set(CMAKE_FIND_DEBUG_MODE OFF)
+
+set(Boost_NO_SYSTEM_PATHS ON)
+find_package(Boost REQUIRED COMPONENTS filesystem graph log log_setup CONFIG)
+find_package(pugixml REQUIRED CONFIG)
+
+add_subdirectory(src)
+
+enable_testing()
+# find_package(FakeIt REQUIRED)
+find_package(Catch2 3 REQUIRED)
+include(CTest)
+include(Catch)
+add_subdirectory(tests)
