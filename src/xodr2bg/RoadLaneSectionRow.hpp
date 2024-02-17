@@ -64,6 +64,11 @@ class cRoadLaneSectionRow
         return (m_eSuccRoadLinkType != eLinkType::unknown && _section == _no_sections - 1);
     }
 
+    bool in_junction() const
+    {
+        return (_junction >= 0);
+    }
+
   public:
     int32_t _processed = 0;
     int32_t _id = -1;         // in [0,oo]

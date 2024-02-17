@@ -14,21 +14,24 @@
 
 #include "CXodrRoadGraph.hpp"
 
-void run( const std::string& base_name )
+void run( const std::string &base_name )
 {
-    CXodrRoadGraph oMyGraph1;
-    std::string tmp = "/home/zeli/XODR/" + base_name + ".xodr";
-    oMyGraph1.init(tmp);
-    tmp = base_name + ".dot";
-    oMyGraph1.to_graphviz(tmp);
-    tmp = "dot -Tpng " + base_name + ".dot > " + base_name + ".png";
-    std::system(tmp.c_str());
+   CXodrRoadGraph oMyGraph1;
+   std::string tmp = "/home/zeli/XODR/" + base_name + ".xodr";
+   oMyGraph1.init(tmp);
+   tmp = base_name + ".dot";
+   oMyGraph1.to_graphviz(tmp);
+   tmp = "dot -Tpng " + base_name + ".dot > " + base_name + ".png";
+   std::system(tmp.c_str());
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    run("3_arm_junction");
-    run("full_junction0");
+   //run("3_2_3_3_2_3");
+   //run("full_junction0");
+   //run("TCross");
+   //run("3_arm_junction");
+   //run("direct_junction_creator0");
 
-    return EXIT_SUCCESS;
+   return EXIT_SUCCESS;
 }

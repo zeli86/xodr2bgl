@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.24)
 
 project (xodr2bgl)
 
-option(ENABLE_TESTS ON)
+set(ENABLE_TESTS ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -27,9 +27,12 @@ find_package(pugixml REQUIRED CONFIG)
 
 add_subdirectory(src)
 
-enable_testing()
-# find_package(FakeIt REQUIRED)
-find_package(Catch2 3 REQUIRED)
-include(CTest)
-include(Catch)
-add_subdirectory(tests)
+message(STATUS "ENABLE_TESTS := ${ENABLE_TESTS}")
+if(ENABLE_TESTS)
+  enable_testing()
+  #find_package(FakeIt REQUIRED)
+  find_package(Catch2 3 REQUIRED)
+  include(CTest)
+  include(Catch)
+  add_subdirectory(tests)
+endif()

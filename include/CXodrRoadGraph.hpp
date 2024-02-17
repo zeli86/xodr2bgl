@@ -54,16 +54,15 @@ class CXodrRoadGraphImpl;
 
 class CXodrRoadGraph
 {
-  public:
-    CXodrRoadGraph();
-    ~CXodrRoadGraph();
+public:
+   CXodrRoadGraph();
+   ~CXodrRoadGraph();
 
-    bool init(const std::string&);
-    void dump(std::ostream&);
-    void to_txt(std::ostream&);
-    void to_graphml(const std::string&);
-    void to_graphviz(const std::string&);
+   bool init(const std::string &);
+   void dump(std::ostream &);
+   void to_txt(std::ostream &);
+   void to_graphviz(const std::string &);
 
-  private:
-    std::unique_ptr<CXodrRoadGraphImpl> _pimpl;
+private:
+   std::unique_ptr<CXodrRoadGraphImpl> _pimpl;
 };

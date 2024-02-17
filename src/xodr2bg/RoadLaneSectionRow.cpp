@@ -9,6 +9,7 @@
  */
 
 #include "RoadLaneSectionRow.hpp"
+#include "enums.hpp"
 #include "helper.hpp"
 #include <iostream>
 
@@ -24,11 +25,11 @@ std::ostream& operator<<(std::ostream& os, const cRoadLaneSectionRow& o)
        << leftcol(9) << o._junction
        << leftcol(7) << o._length
        << leftcol(7) << o._succ
-       << leftcol(14) << mapContactPointToString[o.m_eSuccRoadContactPt]
-       << leftcol(13) << mapLinkTypeToString[o.m_eSuccRoadLinkType]
+       << leftcol(14) << contact_point_bimap.left.at(o.m_eSuccRoadContactPt)
+       << leftcol(13) << link_type_bimap.left.at(o.m_eSuccRoadLinkType)
        << leftcol(7) << o._pred
-       << leftcol(14) << mapContactPointToString[o.m_ePredRoadContactPt]
-       << leftcol(13) << mapLinkTypeToString[o.m_ePredRoadLinkType]
+       << leftcol(14) << contact_point_bimap.left.at(o.m_ePredRoadContactPt)
+       << leftcol(13) <<  link_type_bimap.left.at(o.m_ePredRoadLinkType)
        << leftcol(14) << std::boolalpha << o._pred_lane_valid
        << leftcol(9) << o._pred_lane
        << leftcol(14) << std::boolalpha << o._succ_lane_valid

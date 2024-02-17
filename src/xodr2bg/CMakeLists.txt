@@ -13,6 +13,7 @@ set(SRC_FILES
   enums.hpp
   types.hpp
   types.cpp
+  color_maps.hpp
   JunctionRow.hpp
   JunctionRow.cpp
   RoadLaneSectionRow.hpp

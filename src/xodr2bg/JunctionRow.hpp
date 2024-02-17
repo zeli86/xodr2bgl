@@ -18,6 +18,7 @@ class cJunctionRow
   public:
     friend std::ostream& operator<<(std::ostream&, const cJunctionRow&);
 
+    int32_t _id = -1;
     int32_t _junction = -1;
     int32_t _connection = -1;
     int32_t _connecting_road = -1;
@@ -25,7 +26,8 @@ class cJunctionRow
     int32_t _linked_road = -1; // since OpenDRIVE 1.7
     int32_t _from_lane = 0;
     int32_t _to_lane = 0;
-    eContactPoint m_eContactPoint = eContactPoint::unknown;
+    eContactPoint _eContactPoint = eContactPoint::unknown;
+    eJunctionType _junction_type = eJunctionType::normal;
 };
 
 std::ostream& operator<<(std::ostream&, const cJunctionRow&);
