@@ -11,27 +11,31 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <filesystem>
 
 #include "CXodrRoadGraph.hpp"
 
-void run( const std::string &base_name )
+void run(const std::filesystem::path& xodr_file)
 {
+   std::filesystem::path dot_file = xodr_file;
+   dot_file.replace_extension(".dot");
+
+   CLaneTypeFilter filter;
+   filter.clear().set(eLaneFilterFlags::driving);
+
    CXodrRoadGraph oMyGraph1;
-   std::string tmp = "/home/zeli/XODR/" + base_name + ".xodr";
-   oMyGraph1.init(tmp);
-   tmp = base_name + ".dot";
-   oMyGraph1.to_graphviz(tmp);
-   tmp = "dot -Tpng " + base_name + ".dot > " + base_name + ".png";
-   std::system(tmp.c_str());
+   oMyGraph1.set_lane_type_filter(filter);
+   oMyGraph1.init(xodr_file.native());
+   oMyGraph1.to_graphviz(dot_file.native());
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-   //run("3_2_3_3_2_3");
-   //run("full_junction0");
-   //run("TCross");
-   //run("3_arm_junction");
-   //run("direct_junction_creator0");
-
+   if (argc != 2)
+   {
+      return EXIT_FAILURE;
+   }
+   std::filesystem::path xodr_file = argv[1];
+   run(xodr_file);
    return EXIT_SUCCESS;
 }

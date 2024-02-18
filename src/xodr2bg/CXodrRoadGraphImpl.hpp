@@ -65,33 +65,40 @@ class CXodrRoadGraphImpl
 {
    public:
    CXodrRoadGraphImpl();
+   ~CXodrRoadGraphImpl();
 
-   bool init(const std::string &);
+   bool init(const std::string&);
 
-   void dump(std::ostream &);
+   void dump(std::ostream&);
 
-   void to_graphviz(const std::string &);
+   void to_graphviz(const std::string&);
 
-   void to_txt(std::ostream &);
+   void to_txt(std::ostream&);
 
-   boost::optional<RoadNetEdgeItr> find(const int32_t, const int32_t, const int32_t);
+   void set_lane_type_filter(const CLaneTypeFilter&);
 
-   RoadNet m_RoadNet;
+   void set_log_level(const unsigned=7);
 
    private:
-   bool populateDataTables(const std::string &);
+   bool populateDataTables(const std::string&);
    void updateRoadTable();
    void populateGraph();
 
-   void add_new_edges(const cRoadLaneSectionRow &, int32_t &, int32_t &);
-   void add_new_edge(const boost::optional<RoadNetEdgeItr> &, const boost::optional<RoadNetEdgeItr> &);
+   void add_new_edges(const cRoadLaneSectionRow&, int32_t&, int32_t&);
+   void add_new_edge(const boost::optional<RoadNetEdgeItr>&, const boost::optional<RoadNetEdgeItr>&);
 
    void clear();
-   void dumpRoadTable(std::ostream &);
-   void dumpJunctionTable(std::ostream &);
+   void dumpRoadTable(std::ostream&);
+   void dumpJunctionTable(std::ostream&);
+
+   boost::optional<RoadNetEdgeItr> find(const int32_t, const int32_t, const int32_t);
 
    RoadTable m_miRoadTable;
    JuctionTable m_miJunctionTable;
+   RoadNet m_RoadNet;
+   CLaneTypeFilter _lane_type_filter;
+
+   [[nodiscard]] bool is_enabled(const cRoadLaneSectionRow&);
 
    const std::string m_arrLeftRight[2] = {"left", "right"};
 };

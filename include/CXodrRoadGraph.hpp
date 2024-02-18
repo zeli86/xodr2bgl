@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "Xodr2bgFilter.hpp"
+
 #include <iostream>
 #include <memory>
 #include <ostream>
@@ -54,15 +56,17 @@ class CXodrRoadGraphImpl;
 
 class CXodrRoadGraph
 {
-public:
+ public:
    CXodrRoadGraph();
    ~CXodrRoadGraph();
 
-   bool init(const std::string &);
-   void dump(std::ostream &);
-   void to_txt(std::ostream &);
-   void to_graphviz(const std::string &);
+   bool init(const std::string&);
+   void dump(std::ostream&);
+   void to_txt(std::ostream&);
+   void to_graphviz(const std::string&);
+   void set_lane_type_filter(const CLaneTypeFilter&);
+   void set_log_level(const unsigned=7);
 
-private:
+ private:
    std::unique_ptr<CXodrRoadGraphImpl> _pimpl;
 };

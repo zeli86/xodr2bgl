@@ -7,10 +7,14 @@
 --min-conditional-indent=0
 --pad-header
 --indent-switches
+--indent-modifiers
+--unpad-paren
+
+--indent-preproc-block
 
 # write things as 'char *p'
---align-pointer=name
---align-reference=name
+--align-pointer=type
+--align-reference=type
 
 --suffix=none
 --quiet

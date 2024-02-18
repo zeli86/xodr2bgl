@@ -9,7 +9,6 @@
  */
 
 #include "CXodrRoadGraphImpl.hpp"
-#include "enums.hpp"
 #include "types.hpp"
 #include "color_maps.hpp"
 
@@ -20,11 +19,22 @@
 #include <boost/graph/edge_connectivity.hpp>
 #include <boost/graph/adjacency_list_io.hpp>
 #include <boost/graph/directed_graph.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/core.hpp>
+#include <boost/log/common.hpp>
+#include <boost/log/expressions.hpp>
+
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/attributes/timer.hpp>
+#include <boost/log/attributes/named_scope.hpp>
+
+// #include <boost/log/sources/logger.hpp>
+// #include <boost/log/support/date_time.hpp>
 
 #include <limits>
 #include <utility>
+#include <fstream>
+#include <iomanip>
 
 namespace
 {
@@ -35,9 +45,14 @@ namespace
    }
 }
 
-CXodrRoadGraphImpl::CXodrRoadGraphImpl() = default;
+CXodrRoadGraphImpl::CXodrRoadGraphImpl()
+{
+   set_log_level();
+};
 
-bool CXodrRoadGraphImpl::init(const std::string &sFilePath)
+CXodrRoadGraphImpl::~CXodrRoadGraphImpl() = default;
+
+bool CXodrRoadGraphImpl::init(const std::string& sFilePath)
 {
    BOOST_LOG_TRIVIAL(info) << "Init: " << sFilePath;
    bool bResult = populateDataTables(sFilePath);
@@ -45,8 +60,8 @@ bool CXodrRoadGraphImpl::init(const std::string &sFilePath)
    if (bResult)
    {
       populateGraph();
-      this->dump(std::cout);
-      BOOST_LOG_TRIVIAL(info) << '\n' << boost::write(m_RoadNet);
+      //this->dump(std::cout);
+      //BOOST_LOG_TRIVIAL(info) << '\n' << boost::write(m_RoadNet);
    }
    return bResult;
 }
@@ -58,14 +73,14 @@ boost::optional<RoadNetEdgeItr> CXodrRoadGraphImpl::find(const int32_t road, con
 
    for (; it != it_end; ++it)
    {
-      const auto &data = m_RoadNet[*it];
+      const auto& data = m_RoadNet[*it];
       if (data._road_id == road && data._lane_id == lane && data._lane_section_id == section)
          return boost::optional<RoadNetEdgeItr>(it);
    }
    return boost::none;
 }
 
-bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
+bool CXodrRoadGraphImpl::populateDataTables(const std::string& filepath)
 {
    pugi::xml_document doc;
    pugi::xml_parse_result result = doc.load_file(filepath.c_str());
@@ -75,13 +90,13 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
    BOOST_LOG_TRIVIAL(info) << "Load result: " << result.description();
 
    int32_t iRowCounter = 1;
-   for (const auto &junctionEl : doc.child("OpenDRIVE").children("junction"))
+   for (const auto& junctionEl : doc.child("OpenDRIVE").children("junction"))
    {
       cJunctionRow tmpRow;
       tmpRow._junction = junctionEl.attribute("id").as_int();
       tmpRow._junction_type = junction_type_bimap.right.at(junctionEl.attribute("type").as_string("default"));
 
-      for (const auto &connectionEl : junctionEl.children("connection"))
+      for (const auto& connectionEl : junctionEl.children("connection"))
       {
          tmpRow._connection = connectionEl.attribute("id").as_int();
          tmpRow._connecting_road = connectionEl.attribute("connectingRoad").as_int(-1);
@@ -89,7 +104,7 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
          tmpRow._linked_road = connectionEl.attribute("linkedRoad").as_int(-1);
          tmpRow._eContactPoint = contact_point_bimap.right.at(std::string(connectionEl.attribute("contactPoint").as_string("unknown")));
 
-         for (const auto &laneLinkEl : connectionEl.children("laneLink"))
+         for (const auto& laneLinkEl : connectionEl.children("laneLink"))
          {
             tmpRow._from_lane = laneLinkEl.attribute("from").as_int();
             tmpRow._to_lane = laneLinkEl.attribute("to").as_int();
@@ -100,7 +115,7 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
    }
 
    iRowCounter = 1;
-   for (const auto &roadEl : doc.child("OpenDRIVE").children("road"))
+   for (const auto& roadEl : doc.child("OpenDRIVE").children("road"))
    {
       cRoadLaneSectionRow tmpRow;
 
@@ -128,8 +143,8 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
       tmpRow._no_sections = std::distance(lanesections.begin(), lanesections.end());
 
       std::vector<double> aux_sections;
-      aux_sections.reserve(20);
-      for (const auto &laneSectionEl : lanesections)
+      aux_sections.reserve(25);
+      for (const auto& laneSectionEl : lanesections)
       {
          const double s_val = laneSectionEl.attribute("s").as_double(0);
          aux_sections.push_back(s_val);
@@ -137,20 +152,20 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
       aux_sections.push_back(tmpRow._length);
 
       int32_t iLaneSectionCounter = 0;
-      for (const auto &laneSectionEl : lanesections)
+      for (const auto& laneSectionEl : lanesections)
       {
-         for (const auto &sEl : m_arrLeftRight)
+         for (const auto& sEl : m_arrLeftRight)
          {
             tmpRow.m_eLaneSide = side_bimap.right.at(sEl);
-            for (const auto &laneEl : laneSectionEl.child(sEl.c_str()).children("lane"))
+            for (const auto& laneEl : laneSectionEl.child(sEl.c_str()).children("lane"))
             {
                tmpRow._lane = laneEl.attribute("id").as_int();
                tmpRow.m_sLaneType = laneEl.attribute("type").as_string();
                tmpRow._section = iLaneSectionCounter;
                tmpRow._length = aux_sections.at(1+iLaneSectionCounter) - aux_sections.at(iLaneSectionCounter);
 
-               if (tmpRow.m_sLaneType == "parking")
-                  continue;
+               // if (tmpRow.m_sLaneType == "parking")
+               //    continue;
 
                tmpRow._succ_lane_valid = (laneEl.child("link").child("successor") != nullptr);
                if (tmpRow._succ_lane_valid)
@@ -185,20 +200,19 @@ bool CXodrRoadGraphImpl::populateDataTables(const std::string &filepath)
    }
 
    updateRoadTable();
-
    return true;
 }
 
 
 void CXodrRoadGraphImpl::updateRoadTable()
 {
-   auto &index_junctions = m_miJunctionTable.get<0>();
-   auto &index_roads = m_miRoadTable.get<0>();
+   auto& index_junctions = m_miJunctionTable.get<0>();
+   auto& index_roads = m_miRoadTable.get<0>();
 
    auto r = index_junctions.equal_range(eJunctionType::direct);
    for (auto it = r.first; it != r.second; it++)
    {
-      const auto &junction = *it;
+      const auto& junction = *it;
       auto in = index_roads.upper_bound(boost::make_tuple(junction._incoming_road,junction._from_lane, 1048576));
       --in;
 
@@ -251,18 +265,21 @@ void CXodrRoadGraphImpl::populateGraph()
    int32_t vertex_counter{0};
    int32_t edge_counter{0};
 
-   auto &cIndex = m_miRoadTable.get<2>();
+   auto& cIndex = m_miRoadTable.get<2>();
 
    BOOST_LOG_TRIVIAL(debug) << "Processing regular roads";
    // loop over all regular roads
    auto r = cIndex.equal_range(-1);
    for (auto it = r.first; it != r.second; it++)
    {
-      add_new_edges(*it, vertex_counter, edge_counter);
-      cIndex.modify(it, [](cRoadLaneSectionRow & row)
+      if (is_enabled(*it))
       {
-         row._processed = 1;
-      });
+         add_new_edges(*it, vertex_counter, edge_counter);
+         cIndex.modify(it, [](cRoadLaneSectionRow & row)
+         {
+            row._processed = 1;
+         });
+      }
    }
 
    // loop over all road, that are connecting roads inside a junction
@@ -271,15 +288,18 @@ void CXodrRoadGraphImpl::populateGraph()
    auto it_end = cIndex.upper_bound(std::numeric_limits<int32_t>::max());
    for (; it != it_end; ++it)
    {
-      add_new_edges(*it, vertex_counter, edge_counter);
-      cIndex.modify(it, [](cRoadLaneSectionRow & row)
+      if (is_enabled(*it))
       {
-         row._processed = 2;
-      });
+         add_new_edges(*it, vertex_counter, edge_counter);
+         cIndex.modify(it, [](cRoadLaneSectionRow & row)
+         {
+            row._processed = 2;
+         });
+      }
    }
 }
 
-void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &vertex_counter, int32_t &edge_counter)
+void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow& row, int32_t& vertex_counter, int32_t& edge_counter)
 {
    BOOST_LOG_TRIVIAL(info) << "Processing row " << row._id;
    BOOST_LOG_TRIVIAL(info) << printer::tupleX("road", "lane", "section") << " := " << printer::tupleX(row._road, row._lane, row._section);
@@ -297,7 +317,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
       }
       if (pred_edge.has_value())
       {
-         const auto &edge = *(pred_edge.value());
+         const auto& edge = *(pred_edge.value());
          v0 = target(edge, m_RoadNet);
       }
 
@@ -308,7 +328,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
 
       if (succ_edge.has_value())
       {
-         const auto &edge = *(succ_edge.value());
+         const auto& edge = *(succ_edge.value());
          v1 = source(edge, m_RoadNet);
       }
    }
@@ -319,7 +339,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
       {
          BOOST_LOG_TRIVIAL(debug) << "+ predecessor road";
          auto pred_edge_0 = find(row._pred, row._pred_lane, 0);
-         if ( pred_edge_0.has_value() == true )
+         if (pred_edge_0.has_value() == true)
          {
             switch (row.m_ePredRoadContactPt)
             {
@@ -330,7 +350,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
                break;
                case eContactPoint::end:
                {
-                  const auto &edge = *(pred_edge_0.value());
+                  const auto& edge = *(pred_edge_0.value());
                   auto pred_edge_n = find(row._pred, row._pred_lane, m_RoadNet[edge]._no_sections - 1);
                   pred_edge = move_or_none(std::move(pred_edge_n));
                }
@@ -352,7 +372,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
       {
          BOOST_LOG_TRIVIAL(debug) << "+ successor road";
          auto succ_edge_0 = find(row._succ, row._succ_lane, 0);
-         if ( succ_edge_0.has_value() == true)
+         if (succ_edge_0.has_value() == true)
          {
             switch (row.m_eSuccRoadContactPt)
             {
@@ -363,7 +383,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
                break;
                case eContactPoint::end:
                {
-                  const auto &edge = *(succ_edge_0.value());
+                  const auto& edge = *(succ_edge_0.value());
                   auto succ_edge_n = find(row._succ, row._succ_lane, m_RoadNet[edge]._no_sections - 1);
                   succ_edge = move_or_none(std::move(succ_edge_n));
                }
@@ -383,7 +403,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
    {
       if (row._section == 0)
       {
-         const auto &edge = *(pred_edge.value());
+         const auto& edge = *(pred_edge.value());
          if (row.m_ePredRoadContactPt == eContactPoint::start)
          {
             v0 = source(edge, m_RoadNet);
@@ -403,7 +423,7 @@ void CXodrRoadGraphImpl::add_new_edges(const cRoadLaneSectionRow &row, int32_t &
    {
       if (1 + row._section == row._no_sections)
       {
-         const auto &edge = *(succ_edge.value());
+         const auto& edge = *(succ_edge.value());
          if (row.m_eSuccRoadContactPt == eContactPoint::start)
          {
             v1 = source(edge, m_RoadNet);
@@ -427,12 +447,12 @@ void CXodrRoadGraphImpl::clear()
    m_miJunctionTable.clear();
 }
 
-void CXodrRoadGraphImpl::to_txt(std::ostream &os)
+void CXodrRoadGraphImpl::to_txt(std::ostream& os)
 {
    os << boost::write(m_RoadNet);
 }
 
-void CXodrRoadGraphImpl::to_graphviz(const std::string &filepath)
+void CXodrRoadGraphImpl::to_graphviz(const std::string& filepath)
 {
    using namespace boost;
    std::ofstream gv(filepath);
@@ -452,14 +472,44 @@ void CXodrRoadGraphImpl::to_graphviz(const std::string &filepath)
       const auto id1 = m_RoadNet[target(*ei, m_RoadNet)]._vertex_id;
       const auto ed = m_RoadNet[*ei];
       gv << id0 << "->" << id1
-         << "[label=\"" << printer::tupleX(ed._road_id, ed._lane_id, ed._lane_section_id, ed._length)
+         << "[label=\"" << printer::tupleX(ed._road_id, ed._lane_id, ed._lane_section_id) << "\\n"
+         << std::fixed << std::setprecision(2) << ed._length << "\\n"
+         << ed._road_lane_type
          << "\",color=" << get_lane_type_color(ed._road_lane_type)
          <<  "];\n";
    }
    gv << "}\n";
 }
 
-void CXodrRoadGraphImpl::dump(std::ostream &os)
+void CXodrRoadGraphImpl::set_lane_type_filter(const CLaneTypeFilter& filter)
+{
+   _lane_type_filter = filter;
+}
+
+void CXodrRoadGraphImpl::set_log_level(const unsigned lvl)
+{
+   using namespace boost;
+
+   log::add_common_attributes();
+   log::core::get()->add_thread_attribute("Scope", log::attributes::named_scope());
+
+   log::core::get()->set_filter
+   (
+      log::trivial::severity >= lvl
+   );
+}
+
+bool CXodrRoadGraphImpl::is_enabled(const cRoadLaneSectionRow& row)
+{
+   auto it = lane_type_filter_map.find(row.m_sLaneType);
+   if (it == lane_type_filter_map.end())
+   {
+      return false;
+   }
+   return _lane_type_filter.test(it->second);
+}
+
+void CXodrRoadGraphImpl::dump(std::ostream& os)
 {
    dumpRoadTable(os);
    os << '\n';
@@ -467,7 +517,7 @@ void CXodrRoadGraphImpl::dump(std::ostream &os)
    os << '\n';
 }
 
-void CXodrRoadGraphImpl::dumpRoadTable(std::ostream &os)
+void CXodrRoadGraphImpl::dumpRoadTable(std::ostream& os)
 {
    using namespace printer;
 
@@ -492,14 +542,14 @@ void CXodrRoadGraphImpl::dumpRoadTable(std::ostream &os)
       << leftcol(10) << "NoLaneSec"
       << "\n";
 
-   const auto &idx = m_miRoadTable.get<1>();
+   const auto& idx = m_miRoadTable.get<1>();
    for (auto it = idx.cbegin(); it != idx.cend(); ++it)
    {
       os << *it;
    }
 }
 
-void CXodrRoadGraphImpl::dumpJunctionTable(std::ostream &os)
+void CXodrRoadGraphImpl::dumpJunctionTable(std::ostream& os)
 {
    using namespace printer;
 
@@ -515,7 +565,7 @@ void CXodrRoadGraphImpl::dumpJunctionTable(std::ostream &os)
       << leftcol(13) << "ContactPoint"
       << "\n";
 
-   for (const auto &el : m_miJunctionTable)
+   for (const auto& el : m_miJunctionTable)
    {
       os << el;
    }

@@ -18,6 +18,7 @@ set(SRC_FILES
   JunctionRow.cpp
   RoadLaneSectionRow.hpp
   RoadLaneSectionRow.cpp
+  ${CMAKE_SOURCE_DIR}/include/Xodr2bgFilter.hpp
   ${CMAKE_SOURCE_DIR}/include/CXodrRoadGraph.hpp
   CXodrRoadGraph.cpp
   CXodrRoadGraphImpl.hpp
