@@ -35,7 +35,10 @@
 build/
 Build/
 .vscode
+.cache
 
 # Misc
 *.ods
+*.dot
+*.json
 trash/

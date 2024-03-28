@@ -1,6 +1,7 @@
 
 #include "types.hpp"
 #include "RoadLaneSectionRow.hpp"
+#include "enums.hpp"
 #include "helper.hpp"
 #include <iomanip>
 #include <sstream>
@@ -20,7 +21,6 @@ std::ostream& operator<<(std::ostream& os, const cRoadNetVertexData& data)
 
 cRoadNetEdgeData::cRoadNetEdgeData(const int32_t no, const cRoadLaneSectionRow& row)
 {
-   using namespace std;
    _id = no;
    _row_id = row._id;
    _road_id = row._road;

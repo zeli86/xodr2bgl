@@ -25,7 +25,7 @@ add_executable(${TARGET} ${TARGET}.cpp)
 
 add_dependencies(${TARGET} xodr_road_graph-static)
 
-target_include_directories(${TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/src/xodr2bg )
+target_include_directories(${TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/src/xodr2bg/include )
 
 target_link_libraries(${TARGET} Catch2::Catch2 xodr_road_graph-static)
 

@@ -35,6 +35,8 @@ std::ostream& operator<<(std::ostream& os, const cRoadLaneSectionRow& o)
        << leftcol(14) << std::boolalpha << o._succ_lane_valid
        << leftcol(9) << o._succ_lane
        << leftcol(9) << o.m_sLaneType
-       << leftcol(10) << o._no_sections << '\n';
+       << leftcol(10) << o._no_sections
+       << leftcol(6) << std::boolalpha << o.has_missing_succ_section()
+       << leftcol(6) << std::boolalpha << o.has_missing_pred_section() << '\n';
     return os;
 }

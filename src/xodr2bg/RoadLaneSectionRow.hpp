@@ -9,25 +9,25 @@ class cRoadLaneSectionRow
  public:
    friend std::ostream& operator<<(std::ostream&, const cRoadLaneSectionRow&);
 
-   bool has_succ_junction() const
-   {
-      return (m_eSuccRoadLinkType == eLinkType::junction && _section == _no_sections - 1);
-   }
+   // bool has_succ_junction() const
+   // {
+   //    return (m_eSuccRoadLinkType == eLinkType::junction && _section == _no_sections - 1);
+   // }
 
-   bool has_pred_junction() const
-   {
-      return (m_ePredRoadLinkType == eLinkType::junction && _section == 0);
-   }
+   // bool has_pred_junction() const
+   // {
+   //    return (m_ePredRoadLinkType == eLinkType::junction && _section == 0);
+   // }
 
-   bool has_succ_direct_junction() const
-   {
-      return (m_eSuccRoadLinkType == eLinkType::junction && _section == _no_sections - 1 && _junction == -1);
-   }
+   // bool has_succ_direct_junction() const
+   // {
+   //    return (m_eSuccRoadLinkType == eLinkType::junction && _section == _no_sections - 1 && _junction == -1);
+   // }
 
-   bool has_pred_direct_junction() const
-   {
-      return (m_ePredRoadLinkType == eLinkType::junction && _section == 0 && _junction == -1);
-   }
+   // bool has_pred_direct_junction() const
+   // {
+   //    return (m_ePredRoadLinkType == eLinkType::junction && _section == 0 && _junction == -1);
+   // }
 
    bool has_succ_road() const
    {
@@ -44,15 +44,30 @@ class cRoadLaneSectionRow
       return (_section > 0 && _pred_lane_valid);
    }
 
+   bool has_missing_pred_section() const
+   {
+      return (_section > 0 && !_pred_lane_valid);
+   }
+
    bool has_succ_section() const
    {
       return (_section < _no_sections - 1 && _succ_lane_valid);
    }
 
-   bool has_sections() const
+   bool has_missing_succ_section() const
    {
-      return (has_pred_section() || has_succ_section());
+      return (_section < _no_sections - 1 && !_succ_lane_valid);
    }
+
+   bool is_loose() const
+   {
+      return (has_missing_pred_section() || has_missing_succ_section());
+   }
+
+   // bool has_sections() const
+   // {
+   //    return (has_pred_section() || has_succ_section());
+   // }
 
    bool has_pred() const
    {
@@ -64,10 +79,10 @@ class cRoadLaneSectionRow
       return (m_eSuccRoadLinkType != eLinkType::unknown && _section == _no_sections - 1);
    }
 
-   bool in_junction() const
-   {
-      return (_junction >= 0);
-   }
+   // bool in_junction() const
+   // {
+   //    return (_junction >= 0);
+   // }
 
  public:
    int32_t _processed = 0;

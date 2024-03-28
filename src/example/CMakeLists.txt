@@ -7,6 +7,8 @@ add_dependencies(xodr_road_graph xodr_road_graph-static)
 
 target_compile_options(${TARGET} PRIVATE -Wall)
 
+target_include_directories(${TARGET} PRIVATE ${CMAKE_SOURCE_DIR}/src/xodr2bg/include)
+
 target_link_libraries(${TARGET} xodr_road_graph-static)
 
 # install(TARGETS ${TARGET}

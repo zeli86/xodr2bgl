@@ -17,7 +17,7 @@
 #include <boost/assign.hpp>
 #include <boost/bimap.hpp>
 
-#include "../../include/Xodr2bgFilter.hpp"
+#include "include/Xodr2bgFilter.hpp"
 
 
 using lane_type_filter_bimap_t = std::map<std::string,eLaneFilterFlags>;
@@ -65,7 +65,7 @@ using contact_point_bimap_t = boost::bimap<eContactPoint, std::string>;
 static const contact_point_bimap_t contact_point_bimap = boost::assign::list_of<contact_point_bimap_t::relation>
    (eContactPoint::unknown, "unknown")
    (eContactPoint::start, "start")
-   (eContactPoint::end, "end" );
+   (eContactPoint::end, "end");
 
 enum class eLinkType : int32_t
 {
@@ -79,7 +79,7 @@ using link_type_bimap_t = boost::bimap<eLinkType, std::string>;
 static const link_type_bimap_t link_type_bimap = boost::assign::list_of<link_type_bimap_t::relation>
    (eLinkType::unknown, "unknown")
    (eLinkType::road, "road")
-   (eLinkType::junction, "junction" );
+   (eLinkType::junction, "junction");
 
 enum class eSide : int32_t
 {
@@ -93,7 +93,7 @@ using side_bimap_t = boost::bimap<eSide, std::string>;
 static const side_bimap_t side_bimap = boost::assign::list_of<side_bimap_t::relation>
                                        (eSide::unknown, "unknown")
                                        (eSide::left, "left")
-                                       (eSide::right, "right" );
+                                       (eSide::right, "right");
 
 enum class eJunctionType : int32_t
 {
@@ -110,3 +110,9 @@ static const junction_type_bimap_t junction_type_bimap = boost::assign::list_of<
    (eJunctionType::direct, "direct")
    (eJunctionType::unreal, "virtual")
    (eJunctionType::crossing, "crossing");
+
+enum class eSDirection : int32_t
+{
+   plus,
+   minus
+};

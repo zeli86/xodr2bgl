@@ -47,7 +47,7 @@ class cRoadNetEdgeData
 
 std::ostream& operator<<(std::ostream&, const cRoadNetEdgeData&);
 
-using RoadNet = boost::adjacency_list<boost::listS, boost::vecS, boost::directedS, cRoadNetVertexData, cRoadNetEdgeData>;
+using RoadNet = boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, cRoadNetVertexData, cRoadNetEdgeData>;
 using RoadNetEdge = boost::graph_traits<RoadNet>::edge_descriptor;
 using RoadNetEdgeItr = boost::graph_traits<RoadNet>::edge_iterator;
 using RoadNetVertex = boost::graph_traits<RoadNet>::vertex_descriptor;

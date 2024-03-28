@@ -67,7 +67,9 @@ class CXodrRoadGraphImpl
    CXodrRoadGraphImpl();
    ~CXodrRoadGraphImpl();
 
-   bool init(const std::string&);
+   bool init(const std::string&, const bool);
+
+   void set_lane_type_filter(const CLaneTypeFilter&);
 
    void dump(std::ostream&);
 
@@ -75,11 +77,12 @@ class CXodrRoadGraphImpl
 
    void to_txt(std::ostream&);
 
-   void set_lane_type_filter(const CLaneTypeFilter&);
-
    void set_log_level(const unsigned=7);
 
+   void dfs(const int32_t, const int32_t, const int32_t, const bool);
+
    private:
+   void clear();
    bool populateDataTables(const std::string&);
    void updateRoadTable();
    void populateGraph();
@@ -87,18 +90,20 @@ class CXodrRoadGraphImpl
    void add_new_edges(const cRoadLaneSectionRow&, int32_t&, int32_t&);
    void add_new_edge(const boost::optional<RoadNetEdgeItr>&, const boost::optional<RoadNetEdgeItr>&);
 
-   void clear();
    void dumpRoadTable(std::ostream&);
    void dumpJunctionTable(std::ostream&);
 
+   [[nodiscard]] bool is_enabled(const cRoadLaneSectionRow&);
+
    boost::optional<RoadNetEdgeItr> find(const int32_t, const int32_t, const int32_t);
 
+   bool _auto_connect_lane_sections = false;
+
+   CLaneTypeFilter _lane_type_filter;
    RoadTable m_miRoadTable;
    JuctionTable m_miJunctionTable;
    RoadNet m_RoadNet;
-   CLaneTypeFilter _lane_type_filter;
-
-   [[nodiscard]] bool is_enabled(const cRoadLaneSectionRow&);
 
    const std::string m_arrLeftRight[2] = {"left", "right"};
+   const std::map<eSDirection,const char*> _line_type_map = {{eSDirection::plus, "solid"},{eSDirection::minus, "dashed"}};
 };
